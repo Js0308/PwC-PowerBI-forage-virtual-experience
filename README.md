@@ -1,60 +1,181 @@
-# PwC-forage-virtual-experience
+# Donation Management System
 
-The tasks given under PwC PowerBI Virtual Experience Program in Forage.
+A comprehensive web application for managing donor data, tracking donations, generating receipts, and viewing analytics dashboards.
 
-Task 1: Introduction on PowerBI
+## Features
 
-Task 2: Call Centre Trends
+### 🏠 **Donor Master Data Management**
+- Add, edit, and delete donor information
+- Store contact details, addresses, and tax IDs
+- Search and filter donors
+- Track total donations per donor
 
-Create a dashboard in Power BI that reflects all relevant Key Performance Indicators (KPIs) and metrics in the dataset.
+### 💰 **Donation Tracking**
+- Record donations with date, amount, and purpose
+- Link donations to specific donors
+- Filter donations by donor or month
+- Automatic receipt number generation
 
-This task requires you to create a dashboard in Power BI that displays all the relevant KPIs and metrics related to call center trends.
-Possible KPIs include:
+### 📄 **Monthly Receipt Generation**
+- Generate professional monthly donation receipts
+- Include donor information and donation summaries
+- Print-ready format with tax information
+- Automatic total calculations
 
-Overall customer satisfaction: This KPI measures the satisfaction level of customers who contacted the call center for support.
-Overall calls answered/abandoned: This KPI measures the number of calls answered by agents versus the number of calls abandoned by customers.
-Calls by time: This KPI measures the volume of calls during different times of the day, week, or month.
-Average speed of answer: This KPI measures the average time taken by agents to answer customer calls.
-Agent’s performance quadrant -> average handle time (talk duration) vs calls answered: This KPI measures the performance of agents in terms of the average handle time of calls versus the number of calls answered.
+### 📊 **Analytics Dashboard**
+- View key statistics (total donations, donors, averages)
+- Monthly donation trends chart
+- Top donors visualization
+- Real-time data updates
 
+## How to Use
 
-Task 3: Customer Retention
+### Getting Started
+1. Open `index.html` in a web browser
+2. The application will load with sample data
+3. Navigate between sections using the top navigation buttons
 
-Define proper KPIs:
+### Managing Donors
+1. Click on **"Donors"** tab
+2. Click **"Add Donor"** to create new donor records
+3. Fill in required information (Name, Email) and optional details
+4. Use the search bar to find specific donors
+5. Edit or delete donors using the action buttons
 
-This task requires you to define the appropriate KPIs for the retention manager based on the dataset.
-Create a dashboard for the retention manager reflecting the KPIs:
+### Recording Donations
+1. Click on **"Donations"** tab
+2. Click **"Add Donation"** to record new donations
+3. Select a donor, enter amount, date, and purpose
+4. Filter donations by donor or month using the filter options
+5. View or delete donations using the action buttons
 
-This task requires you to create a dashboard that displays the defined KPIs for the retention manager to track the customer retention rate.
-Write a short email to him (the engagement partner) explaining your findings, and include suggestions as to what needs to be changed:
+### Generating Receipts
+1. Click on **"Receipts"** tab
+2. Select a donor from the dropdown
+3. Choose the month for which you want to generate a receipt
+4. Click **"Generate Receipt"** to create a printable receipt
+5. The receipt includes all donations for that donor in the selected month
 
-This task requires you to write an email to the engagement partner, explaining the findings from the dashboard and providing suggestions on what needs to be changed to improve customer retention.
+### Viewing Analytics
+1. Click on **"Dashboard"** tab
+2. View summary statistics at the top
+3. Analyze trends with the monthly donations chart
+4. See top donors in the doughnut chart
+5. Click **"Refresh"** to update the dashboard
 
+## Technical Features
 
-Task 4: Diversity & Inclusion
+### Data Storage
+- Uses browser's localStorage for data persistence
+- Automatic data saving after each operation
+- JSON format for easy data management
 
-Gender balance in the executive suite:
+### Responsive Design
+- Mobile-friendly interface
+- Adaptable layout for all screen sizes
+- Touch-friendly buttons and forms
 
-This task requires you to measure and analyze the gender balance in the executive suite and create appropriate KPIs based on the dataset.
-Calculating the following measures could help to define proper KPIs:
+### Modern UI/UX
+- Clean, professional design
+- Smooth animations and transitions
+- Intuitive navigation
+- Visual feedback for user actions
 
-No. of men: This KPI measures the number of male employees in the executive suite.
+### Charts and Visualization
+- Chart.js integration for interactive charts
+- Monthly trend analysis
+- Top donors breakdown
+- Real-time data updates
 
-No. of women: This KPI measures the number of female employees in the executive suite.
+## File Structure
 
-No. of leavers: This KPI measures the number of employees who left the company during the given period.
+```
+donation-management-system/
+├── index.html          # Main HTML structure
+├── styles.css          # CSS styling and responsive design
+├── script.js           # JavaScript functionality
+└── README.md          # This documentation file
+```
 
-% employees promoted (FY21): This KPI measures the percentage of employees who were promoted in the financial year 2021.
+## Browser Requirements
 
-% of women promoted: This KPI measures the percentage of female employees who were promoted during the given period.
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- JavaScript enabled
+- localStorage support
+- Internet connection for external libraries (Font Awesome, Chart.js)
 
-% of hires men: This KPI measures the percentage of male employees who were hired during the given period.
+## Sample Data
 
-% of hires women: This KPI measures the percentage of female employees who were hired during the given period.
+The application includes sample data for demonstration:
+- 3 sample donors with contact information
+- 5 sample donations across different months
+- Realistic donation amounts and purposes
 
-% turnover: This KPI measures the percentage of employees who left the company during the given period.
+## Data Fields
 
-Average performance rating: men: This KPI measures the average performance rating of male employees in the executive suite.
+### Donor Information
+- **Name** (required): Full name of the donor
+- **Email** (required): Email address for communication
+- **Phone**: Contact phone number
+- **Address**: Mailing address
+- **Tax ID**: Tax identification number
 
-Average Performance rating: women: This KPI measures the average performance rating of female employees in the executive suite.
+### Donation Information
+- **Donor**: Selected from existing donors
+- **Amount**: Donation amount in USD
+- **Date**: Date of donation
+- **Purpose**: Category (General, Education, Healthcare, Emergency, Other)
+- **Notes**: Additional comments or details
+
+### Receipt Information
+- **Receipt Number**: Automatically generated unique identifier
+- **Organization Details**: Customizable organization information
+- **Tax Information**: 501(c)(3) status and tax ID
+- **Donation Summary**: Tabular format of all donations for the month
+
+## Customization
+
+### Organization Information
+Edit the `generateReceiptHtml()` function in `script.js` to customize:
+- Organization name and address
+- Contact information
+- Tax ID number
+- Receipt formatting
+
+### Styling
+Modify `styles.css` to customize:
+- Color scheme
+- Typography
+- Layout and spacing
+- Responsive breakpoints
+
+### Data Fields
+Add or modify fields by updating:
+- HTML form elements
+- CSS styling for new fields
+- JavaScript data handling functions
+
+## Security Considerations
+
+- Data is stored locally in the browser
+- No server-side processing required
+- Consider implementing backup/export functionality for production use
+- Sensitive data should be handled according to privacy regulations
+
+## Future Enhancements
+
+- Export data to CSV/Excel
+- Email receipt functionality
+- Multi-organization support
+- Advanced reporting features
+- Database integration
+- User authentication system
+
+## Support
+
+For issues or questions, please review the code comments and console logs for debugging information.
+
+---
+
+**Note**: This is a client-side application designed for demonstration purposes. For production use, consider implementing server-side data storage and additional security measures.
 

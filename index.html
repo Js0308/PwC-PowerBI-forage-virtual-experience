@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-heart"></i> Donation Management System</h1>
+            <nav>
+                <button class="nav-btn active" onclick="showSection('donors')">
+                    <i class="fas fa-users"></i> Donors
+                </button>
+                <button class="nav-btn" onclick="showSection('donations')">
+                    <i class="fas fa-hand-holding-heart"></i> Donations
+                </button>
+                <button class="nav-btn" onclick="showSection('receipts')">
+                    <i class="fas fa-receipt"></i> Receipts
+                </button>
+                <button class="nav-btn" onclick="showSection('dashboard')">
+                    <i class="fas fa-chart-bar"></i> Dashboard
+                </button>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Donors Section -->
+            <section id="donors" class="section active">
+                <div class="section-header">
+                    <h2>Donor Master Data</h2>
+                    <button class="btn btn-primary" onclick="showModal('donorModal')">
+                        <i class="fas fa-plus"></i> Add Donor
+                    </button>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="donorSearch" placeholder="Search donors..." onkeyup="searchDonors()">
+                </div>
+                <div class="table-container">
+                    <table id="donorsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                                <th>Total Donations</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="donorsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Donations Section -->
+            <section id="donations" class="section">
+                <div class="section-header">
+                    <h2>Donation Records</h2>
+                    <button class="btn btn-primary" onclick="showModal('donationModal')">
+                        <i class="fas fa-plus"></i> Add Donation
+                    </button>
+                </div>
+                <div class="filters">
+                    <select id="donorFilter" onchange="filterDonations()">
+                        <option value="">All Donors</option>
+                    </select>
+                    <input type="month" id="monthFilter" onchange="filterDonations()">
+                </div>
+                <div class="table-container">
+                    <table id="donationsTable">
+                        <thead>
+                            <tr>
+                                <th>Receipt No</th>
+                                <th>Date</th>
+                                <th>Donor</th>
+                                <th>Amount</th>
+                                <th>Purpose</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="donationsTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Receipts Section -->
+            <section id="receipts" class="section">
+                <div class="section-header">
+                    <h2>Monthly Donation Receipts</h2>
+                    <div class="receipt-controls">
+                        <select id="receiptDonor" onchange="updateReceiptData()">
+                            <option value="">Select Donor</option>
+                        </select>
+                        <input type="month" id="receiptMonth" onchange="updateReceiptData()">
+                        <button class="btn btn-primary" onclick="generateReceipt()">
+                            <i class="fas fa-file-pdf"></i> Generate Receipt
+                        </button>
+                    </div>
+                </div>
+                <div id="receiptPreview" class="receipt-preview">
+                    <div class="receipt-content">
+                        <h3>Monthly Donation Receipt</h3>
+                        <div id="receiptDetails"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section">
+                <div class="section-header">
+                    <h2>Analytics Dashboard</h2>
+                    <button class="btn btn-secondary" onclick="refreshDashboard()">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3>Total Donations</h3>
+                        <div class="stat-value" id="totalDonations">$0</div>
+                    </div>
+                    <div class="card">
+                        <h3>Total Donors</h3>
+                        <div class="stat-value" id="totalDonors">0</div>
+                    </div>
+                    <div class="card">
+                        <h3>This Month</h3>
+                        <div class="stat-value" id="thisMonth">$0</div>
+                    </div>
+                    <div class="card">
+                        <h3>Average Donation</h3>
+                        <div class="stat-value" id="avgDonation">$0</div>
+                    </div>
+                </div>
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3>Monthly Donations Trend</h3>
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Top Donors</h3>
+                        <canvas id="topDonorsChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Donor Modal -->
+        <div id="donorModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add/Edit Donor</h3>
+                    <span class="close" onclick="closeModal('donorModal')">&times;</span>
+                </div>
+                <form id="donorForm">
+                    <div class="form-group">
+                        <label for="donorName">Name *</label>
+                        <input type="text" id="donorName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="donorEmail">Email *</label>
+                        <input type="email" id="donorEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="donorPhone">Phone</label>
+                        <input type="tel" id="donorPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="donorAddress">Address</label>
+                        <textarea id="donorAddress" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="donorTaxId">Tax ID</label>
+                        <input type="text" id="donorTaxId">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('donorModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Donation Modal -->
+        <div id="donationModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Donation</h3>
+                    <span class="close" onclick="closeModal('donationModal')">&times;</span>
+                </div>
+                <form id="donationForm">
+                    <div class="form-group">
+                        <label for="donationDonor">Donor *</label>
+                        <select id="donationDonor" required>
+                            <option value="">Select Donor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="donationAmount">Amount *</label>
+                        <input type="number" id="donationAmount" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="donationDate">Date *</label>
+                        <input type="date" id="donationDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="donationPurpose">Purpose</label>
+                        <select id="donationPurpose">
+                            <option value="General">General</option>
+                            <option value="Education">Education</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Emergency">Emergency</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="donationNotes">Notes</label>
+                        <textarea id="donationNotes" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('donationModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
