@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Image Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .color-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color-group > div {
+            flex: 1;
+        }
+
+        .size-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .size-group > div {
+            flex: 1;
+        }
+
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 15px;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .image-display {
+            width: 100%;
+            min-height: 300px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+            margin-bottom: 20px;
+        }
+
+        .image-display img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 5px;
+        }
+
+        .placeholder {
+            text-align: center;
+            color: #999;
+            font-size: 18px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #d00;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success {
+            background: #e6ffe6;
+            color: #060;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            margin-top: 10px;
+            display: none;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: #f5f5f5;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Simple Image Generator</h1>
+        
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('gradient')">Gradient</button>
+            <button class="tab" onclick="showTab('pattern')">Patterns</button>
+            <button class="tab" onclick="showTab('mandala')">Mandala</button>
+        </div>
+
+        <!-- Gradient Tab -->
+        <div id="gradient" class="tab-content active">
+            <div class="form-section">
+                <div class="size-group">
+                    <div>
+                        <label>Width:</label>
+                        <input type="number" id="gradient-width" value="400" min="100" max="1000">
+                    </div>
+                    <div>
+                        <label>Height:</label>
+                        <input type="number" id="gradient-height" value="300" min="100" max="1000">
+                    </div>
+                </div>
+                
+                <div class="color-group">
+                    <div>
+                        <label>Color 1:</label>
+                        <input type="color" id="gradient-color1" value="#ff0000">
+                    </div>
+                    <div>
+                        <label>Color 2:</label>
+                        <input type="color" id="gradient-color2" value="#0000ff">
+                    </div>
+                </div>
+                
+                <button onclick="generateGradient()">Generate Gradient</button>
+            </div>
+        </div>
+
+        <!-- Pattern Tab -->
+        <div id="pattern" class="tab-content">
+            <div class="form-section">
+                <div class="size-group">
+                    <div>
+                        <label>Width:</label>
+                        <input type="number" id="pattern-width" value="400" min="100" max="1000">
+                    </div>
+                    <div>
+                        <label>Height:</label>
+                        <input type="number" id="pattern-height" value="300" min="100" max="1000">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Pattern Type:</label>
+                    <select id="pattern-type">
+                        <option value="circles">Circles</option>
+                        <option value="rectangles">Rectangles</option>
+                        <option value="lines">Lines</option>
+                    </select>
+                </div>
+                
+                <button onclick="generatePattern()">Generate Pattern</button>
+            </div>
+        </div>
+
+        <!-- Mandala Tab -->
+        <div id="mandala" class="tab-content">
+            <div class="form-section">
+                <div class="size-group">
+                    <div>
+                        <label>Width:</label>
+                        <input type="number" id="mandala-width" value="400" min="100" max="1000">
+                    </div>
+                    <div>
+                        <label>Height:</label>
+                        <input type="number" id="mandala-height" value="300" min="100" max="1000">
+                    </div>
+                </div>
+                
+                <button onclick="generateMandala()">Generate Mandala</button>
+            </div>
+        </div>
+
+        <div class="image-display" id="image-display">
+            <div class="placeholder">
+                <p>🖼️ Your generated image will appear here</p>
+            </div>
+            <div class="loading" id="loading">Generating image...</div>
+        </div>
+
+        <button class="download-btn" id="download-btn" onclick="downloadImage()">📥 Download Image</button>
+    </div>
+
+    <script>
+        let currentImage = null;
+
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.querySelector('.placeholder').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('error');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successEl = document.getElementById('success');
+            successEl.textContent = message;
+            successEl.style.display = 'block';
+            setTimeout(() => {
+                successEl.style.display = 'none';
+            }, 3000);
+        }
+
+        function displayImage(imageData) {
+            const imageDisplay = document.getElementById('image-display');
+            imageDisplay.innerHTML = `<img src="${imageData}" alt="Generated Image">`;
+            currentImage = imageData;
+            document.getElementById('download-btn').style.display = 'block';
+            hideLoading();
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? [
+                parseInt(result[1], 16),
+                parseInt(result[2], 16),
+                parseInt(result[3], 16)
+            ] : [255, 255, 255];
+        }
+
+        async function generateGradient() {
+            showLoading();
+            
+            const width = parseInt(document.getElementById('gradient-width').value);
+            const height = parseInt(document.getElementById('gradient-height').value);
+            const color1 = hexToRgb(document.getElementById('gradient-color1').value);
+            const color2 = hexToRgb(document.getElementById('gradient-color2').value);
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: 'gradient',
+                        width,
+                        height,
+                        color1,
+                        color2
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    displayImage(data.image);
+                    showSuccess('Gradient generated successfully!');
+                } else {
+                    showError(data.error || 'Failed to generate gradient');
+                    hideLoading();
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        async function generatePattern() {
+            showLoading();
+            
+            const width = parseInt(document.getElementById('pattern-width').value);
+            const height = parseInt(document.getElementById('pattern-height').value);
+            const pattern = document.getElementById('pattern-type').value;
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: 'pattern',
+                        width,
+                        height,
+                        pattern
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    displayImage(data.image);
+                    showSuccess('Pattern generated successfully!');
+                } else {
+                    showError(data.error || 'Failed to generate pattern');
+                    hideLoading();
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        async function generateMandala() {
+            showLoading();
+            
+            const width = parseInt(document.getElementById('mandala-width').value);
+            const height = parseInt(document.getElementById('mandala-height').value);
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: 'mandala',
+                        width,
+                        height
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    displayImage(data.image);
+                    showSuccess('Mandala generated successfully!');
+                } else {
+                    showError(data.error || 'Failed to generate mandala');
+                    hideLoading();
+                }
+            } catch (error) {
+                showError('Error: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        function downloadImage() {
+            if (!currentImage) {
+                showError('No image to download');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.download = `generated-image-${Date.now()}.png`;
+            link.href = currentImage;
+            link.click();
+        }
+    </script>
+</body>
+</html>
