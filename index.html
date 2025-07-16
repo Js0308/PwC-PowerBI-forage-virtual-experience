@@ -13,7 +13,10 @@
         <header>
             <h1><i class="fas fa-heart"></i> Donation Management System</h1>
             <nav>
-                <button class="nav-btn active" onclick="showSection('donors')">
+                <button class="nav-btn active" onclick="showSection('masterdata')">
+                    <i class="fas fa-database"></i> Master Data
+                </button>
+                <button class="nav-btn" onclick="showSection('donors')">
                     <i class="fas fa-users"></i> Donors
                 </button>
                 <button class="nav-btn" onclick="showSection('donations')">
@@ -29,8 +32,82 @@
         </header>
 
         <main>
+            <!-- Master Data Preparation Section -->
+            <section id="masterdata" class="section active">
+                <div class="section-header">
+                    <h2>Master Data Preparation</h2>
+                    <div class="donor-count">
+                        <span class="count-badge">Total Donors: <span id="donorCount">0</span></span>
+                    </div>
+                </div>
+                <div class="master-data-form">
+                    <form id="masterDataForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="masterEmail">Email *</label>
+                                <input type="email" id="masterEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="masterPhone">Phone</label>
+                                <input type="tel" id="masterPhone">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mobileNo">Mobile Number</label>
+                                <input type="tel" id="mobileNo">
+                            </div>
+                            <div class="form-group">
+                                <label for="masterTaxId">Tax ID</label>
+                                <input type="text" id="masterTaxId">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="masterAddress">Address</label>
+                            <textarea id="masterAddress" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="donorPhoto">Photo Upload</label>
+                            <div class="photo-upload-container">
+                                <input type="file" id="donorPhoto" accept="image/*" onchange="previewPhoto(event)">
+                                <div class="photo-preview" id="photoPreview">
+                                    <div class="photo-placeholder">
+                                        <i class="fas fa-camera"></i>
+                                        <p>Click to upload photo</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="clearMasterDataForm()">
+                                <i class="fas fa-times"></i> Clear
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Donor
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="master-data-preview">
+                    <h3>Recent Donors</h3>
+                    <div class="donor-cards-container" id="donorCards">
+                        <!-- Donor cards will be populated here -->
+                    </div>
+                </div>
+            </section>
+
             <!-- Donors Section -->
-            <section id="donors" class="section active">
+            <section id="donors" class="section">
                 <div class="section-header">
                     <h2>Donor Master Data</h2>
                     <button class="btn btn-primary" onclick="showModal('donorModal')">
@@ -45,9 +122,12 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Name</th>
+                                <th>Photo</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
                                 <th>Email</th>
                                 <th>Phone</th>
+                                <th>Mobile</th>
                                 <th>Address</th>
                                 <th>Total Donations</th>
                                 <th>Actions</th>
@@ -160,17 +240,29 @@
                     <span class="close" onclick="closeModal('donorModal')">&times;</span>
                 </div>
                 <form id="donorForm">
-                    <div class="form-group">
-                        <label for="donorName">Name *</label>
-                        <input type="text" id="donorName" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="donorFirstName">First Name *</label>
+                            <input type="text" id="donorFirstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="donorLastName">Last Name *</label>
+                            <input type="text" id="donorLastName" required>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="donorEmail">Email *</label>
                         <input type="email" id="donorEmail" required>
                     </div>
-                    <div class="form-group">
-                        <label for="donorPhone">Phone</label>
-                        <input type="tel" id="donorPhone">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="donorPhone">Phone</label>
+                            <input type="tel" id="donorPhone">
+                        </div>
+                        <div class="form-group">
+                            <label for="donorMobile">Mobile Number</label>
+                            <input type="tel" id="donorMobile">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="donorAddress">Address</label>
@@ -179,6 +271,18 @@
                     <div class="form-group">
                         <label for="donorTaxId">Tax ID</label>
                         <input type="text" id="donorTaxId">
+                    </div>
+                    <div class="form-group">
+                        <label for="donorPhotoModal">Photo Upload</label>
+                        <div class="photo-upload-container">
+                            <input type="file" id="donorPhotoModal" accept="image/*" onchange="previewPhotoModal(event)">
+                            <div class="photo-preview" id="photoPreviewModal">
+                                <div class="photo-placeholder">
+                                    <i class="fas fa-camera"></i>
+                                    <p>Click to upload photo</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="closeModal('donorModal')">Cancel</button>

@@ -10,6 +10,8 @@ class DonationManager {
     init() {
         this.loadDonors();
         this.loadDonations();
+        this.loadDonorCards();
+        this.updateDonorCount();
         this.setupEventListeners();
         this.refreshDashboard();
         this.setCurrentDate();
@@ -22,6 +24,11 @@ class DonationManager {
 
     setupEventListeners() {
         // Form submissions
+        document.getElementById('masterDataForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveMasterData();
+        });
+
         document.getElementById('donorForm').addEventListener('submit', (e) => {
             e.preventDefault();
             this.saveDonor();
@@ -42,15 +49,35 @@ class DonationManager {
         });
     }
 
-    // Donor Management
-    saveDonor() {
+    // Master Data Management
+    saveMasterData() {
+        const photoFile = document.getElementById('donorPhoto').files[0];
+        let photoData = null;
+
+        if (photoFile) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                photoData = e.target.result;
+                this.createDonorFromMasterData(photoData);
+            };
+            reader.readAsDataURL(photoFile);
+        } else {
+            this.createDonorFromMasterData(photoData);
+        }
+    }
+
+    createDonorFromMasterData(photoData) {
         const donor = {
             id: Date.now(),
-            name: document.getElementById('donorName').value,
-            email: document.getElementById('donorEmail').value,
-            phone: document.getElementById('donorPhone').value || '',
-            address: document.getElementById('donorAddress').value || '',
-            taxId: document.getElementById('donorTaxId').value || '',
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            name: document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value,
+            email: document.getElementById('masterEmail').value,
+            phone: document.getElementById('masterPhone').value || '',
+            mobile: document.getElementById('mobileNo').value || '',
+            address: document.getElementById('masterAddress').value || '',
+            taxId: document.getElementById('masterTaxId').value || '',
+            photo: photoData,
             totalDonations: 0,
             createdAt: new Date().toISOString()
         };
@@ -58,7 +85,53 @@ class DonationManager {
         this.donors.push(donor);
         this.saveToStorage();
         this.loadDonors();
+        this.loadDonorCards();
         this.populateDonorDropdowns();
+        this.updateDonorCount();
+        this.clearForm('masterDataForm');
+        this.clearPhotoPreview();
+        this.showNotification('Donor added successfully!', 'success');
+    }
+
+    // Donor Management
+    saveDonor() {
+        const photoFile = document.getElementById('donorPhotoModal').files[0];
+        let photoData = null;
+
+        if (photoFile) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                photoData = e.target.result;
+                this.createDonorFromModal(photoData);
+            };
+            reader.readAsDataURL(photoFile);
+        } else {
+            this.createDonorFromModal(photoData);
+        }
+    }
+
+    createDonorFromModal(photoData) {
+        const donor = {
+            id: Date.now(),
+            firstName: document.getElementById('donorFirstName').value,
+            lastName: document.getElementById('donorLastName').value,
+            name: document.getElementById('donorFirstName').value + ' ' + document.getElementById('donorLastName').value,
+            email: document.getElementById('donorEmail').value,
+            phone: document.getElementById('donorPhone').value || '',
+            mobile: document.getElementById('donorMobile').value || '',
+            address: document.getElementById('donorAddress').value || '',
+            taxId: document.getElementById('donorTaxId').value || '',
+            photo: photoData,
+            totalDonations: 0,
+            createdAt: new Date().toISOString()
+        };
+
+        this.donors.push(donor);
+        this.saveToStorage();
+        this.loadDonors();
+        this.loadDonorCards();
+        this.populateDonorDropdowns();
+        this.updateDonorCount();
         this.closeModal('donorModal');
         this.clearForm('donorForm');
         this.showNotification('Donor added successfully!', 'success');
@@ -70,11 +143,18 @@ class DonationManager {
 
         this.donors.forEach(donor => {
             const row = document.createElement('tr');
+            const photoCell = donor.photo ? 
+                `<img src="${donor.photo}" alt="${donor.name}" class="table-photo">` : 
+                `<div class="table-photo-placeholder"><i class="fas fa-user"></i></div>`;
+            
             row.innerHTML = `
                 <td>${donor.id}</td>
-                <td>${donor.name}</td>
+                <td>${photoCell}</td>
+                <td>${donor.firstName || ''}</td>
+                <td>${donor.lastName || ''}</td>
                 <td>${donor.email}</td>
                 <td>${donor.phone}</td>
+                <td>${donor.mobile || ''}</td>
                 <td>${donor.address}</td>
                 <td>$${donor.totalDonations.toFixed(2)}</td>
                 <td>
@@ -90,6 +170,53 @@ class DonationManager {
         });
 
         this.populateDonorDropdowns();
+    }
+
+    loadDonorCards() {
+        const container = document.getElementById('donorCards');
+        container.innerHTML = '';
+
+        // Show only the 6 most recent donors
+        const recentDonors = this.donors.slice(-6).reverse();
+
+        recentDonors.forEach(donor => {
+            const card = document.createElement('div');
+            card.className = 'donor-card';
+            
+            const photoElement = donor.photo ? 
+                `<img src="${donor.photo}" alt="${donor.name}" class="donor-card-photo">` : 
+                `<div class="donor-card-photo-placeholder"><i class="fas fa-user"></i></div>`;
+            
+            card.innerHTML = `
+                <div class="donor-card-header">
+                    ${photoElement}
+                    <div class="donor-card-info">
+                        <h4>${donor.firstName || ''} ${donor.lastName || ''}</h4>
+                        <p><i class="fas fa-envelope"></i> ${donor.email}</p>
+                        <p><i class="fas fa-phone"></i> ${donor.phone}</p>
+                    </div>
+                </div>
+                <div class="donor-card-details">
+                    ${donor.mobile ? `<p><i class="fas fa-mobile-alt"></i> ${donor.mobile}</p>` : ''}
+                    ${donor.address ? `<p><i class="fas fa-map-marker-alt"></i> ${donor.address}</p>` : ''}
+                    <p><i class="fas fa-donate"></i> Total Donations: $${donor.totalDonations.toFixed(2)}</p>
+                </div>
+                <div class="donor-card-actions">
+                    <button class="btn btn-secondary" onclick="donationManager.editDonor(${donor.id})">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-danger" onclick="donationManager.deleteDonor(${donor.id})">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(card);
+        });
+    }
+
+    updateDonorCount() {
+        document.getElementById('donorCount').textContent = this.donors.length;
     }
 
     populateDonorDropdowns() {
@@ -115,11 +242,27 @@ class DonationManager {
     editDonor(id) {
         const donor = this.donors.find(d => d.id === id);
         if (donor) {
-            document.getElementById('donorName').value = donor.name;
+            document.getElementById('donorFirstName').value = donor.firstName || '';
+            document.getElementById('donorLastName').value = donor.lastName || '';
             document.getElementById('donorEmail').value = donor.email;
             document.getElementById('donorPhone').value = donor.phone;
+            document.getElementById('donorMobile').value = donor.mobile || '';
             document.getElementById('donorAddress').value = donor.address;
             document.getElementById('donorTaxId').value = donor.taxId;
+            
+            // Handle photo preview
+            const photoPreview = document.getElementById('photoPreviewModal');
+            if (donor.photo) {
+                photoPreview.innerHTML = `<img src="${donor.photo}" alt="Preview">`;
+            } else {
+                photoPreview.innerHTML = `
+                    <div class="photo-placeholder">
+                        <i class="fas fa-camera"></i>
+                        <p>Click to upload photo</p>
+                    </div>
+                `;
+            }
+            
             this.showModal('donorModal');
         }
     }
@@ -129,6 +272,8 @@ class DonationManager {
             this.donors = this.donors.filter(d => d.id !== id);
             this.saveToStorage();
             this.loadDonors();
+            this.loadDonorCards();
+            this.updateDonorCount();
             this.showNotification('Donor deleted successfully!', 'success');
         }
     }
@@ -513,6 +658,24 @@ class DonationManager {
             notification.remove();
         }, 3000);
     }
+
+    clearPhotoPreview() {
+        document.getElementById('photoPreview').innerHTML = `
+            <div class="photo-placeholder">
+                <i class="fas fa-camera"></i>
+                <p>Click to upload photo</p>
+            </div>
+        `;
+    }
+
+    clearPhotoPreviewModal() {
+        document.getElementById('photoPreviewModal').innerHTML = `
+            <div class="photo-placeholder">
+                <i class="fas fa-camera"></i>
+                <p>Click to upload photo</p>
+            </div>
+        `;
+    }
 }
 
 // Global Functions
@@ -561,6 +724,33 @@ function refreshDashboard() {
     donationManager.refreshDashboard();
 }
 
+function previewPhoto(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('photoPreview').innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function previewPhotoModal(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('photoPreviewModal').innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function clearMasterDataForm() {
+    document.getElementById('masterDataForm').reset();
+    donationManager.clearPhotoPreview();
+}
+
 // Initialize the application
 let donationManager;
 document.addEventListener('DOMContentLoaded', function() {
@@ -577,31 +767,43 @@ function addSampleData() {
     const sampleDonors = [
         {
             id: 1,
+            firstName: 'John',
+            lastName: 'Smith',
             name: 'John Smith',
             email: 'john@example.com',
             phone: '(555) 123-4567',
+            mobile: '(555) 123-4568',
             address: '123 Main St, City, State 12345',
             taxId: '123-45-6789',
+            photo: null,
             totalDonations: 1500,
             createdAt: new Date().toISOString()
         },
         {
             id: 2,
+            firstName: 'Jane',
+            lastName: 'Doe',
             name: 'Jane Doe',
             email: 'jane@example.com',
             phone: '(555) 987-6543',
+            mobile: '(555) 987-6544',
             address: '456 Oak Ave, City, State 12345',
             taxId: '987-65-4321',
+            photo: null,
             totalDonations: 2000,
             createdAt: new Date().toISOString()
         },
         {
             id: 3,
+            firstName: 'Bob',
+            lastName: 'Johnson',
             name: 'Bob Johnson',
             email: 'bob@example.com',
             phone: '(555) 456-7890',
+            mobile: '(555) 456-7891',
             address: '789 Pine Rd, City, State 12345',
             taxId: '456-78-9012',
+            photo: null,
             totalDonations: 750,
             createdAt: new Date().toISOString()
         }
@@ -666,5 +868,7 @@ function addSampleData() {
     donationManager.saveToStorage();
     donationManager.loadDonors();
     donationManager.loadDonations();
+    donationManager.loadDonorCards();
+    donationManager.updateDonorCount();
     donationManager.refreshDashboard();
 }

@@ -4,11 +4,20 @@ A comprehensive web application for managing donor data, tracking donations, gen
 
 ## Features
 
+### 🏠 **Master Data Preparation**
+- Comprehensive donor data entry form
+- Separate first name and last name fields
+- Photo upload functionality for donor profiles
+- Mobile number field in addition to phone
+- Real-time donor count display
+- Visual donor cards with recent entries
+
 ### 🏠 **Donor Master Data Management**
 - Add, edit, and delete donor information
 - Store contact details, addresses, and tax IDs
 - Search and filter donors
 - Track total donations per donor
+- View donor photos in table and card formats
 
 ### 💰 **Donation Tracking**
 - Record donations with date, amount, and purpose
@@ -34,6 +43,18 @@ A comprehensive web application for managing donor data, tracking donations, gen
 1. Open `index.html` in a web browser
 2. The application will load with sample data
 3. Navigate between sections using the top navigation buttons
+
+### Master Data Preparation
+1. Click on **"Master Data"** tab (default view)
+2. Fill in the comprehensive donor form with:
+   - First Name and Last Name (required)
+   - Email address (required)
+   - Phone and Mobile numbers
+   - Address and Tax ID
+   - Upload donor photo
+3. Click **"Save Donor"** to add the donor
+4. View recent donors in the visual card layout below
+5. Monitor total donor count in the header
 
 ### Managing Donors
 1. Click on **"Donors"** tab
@@ -114,11 +135,14 @@ The application includes sample data for demonstration:
 ## Data Fields
 
 ### Donor Information
-- **Name** (required): Full name of the donor
+- **First Name** (required): Donor's first name
+- **Last Name** (required): Donor's last name
 - **Email** (required): Email address for communication
-- **Phone**: Contact phone number
+- **Phone**: Primary contact phone number
+- **Mobile**: Mobile phone number
 - **Address**: Mailing address
 - **Tax ID**: Tax identification number
+- **Photo**: Donor's profile image (optional)
 
 ### Donation Information
 - **Donor**: Selected from existing donors
