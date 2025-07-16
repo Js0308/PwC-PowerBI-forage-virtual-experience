@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jama Masjid Phugewadi Admin Panel - Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .card {
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+            padding: 1.5rem;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .feature-item {
+            transition: all 0.3s ease;
+        }
+        .feature-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-white bg-opacity-20 p-2 rounded-lg">
+                        <i data-feather="home" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">Jama Masjid Phugewadi</h1>
+                        <p class="text-blue-100">Admin Panel</p>
+                    </div>
+                </div>
+                <div class="bg-white bg-opacity-20 px-4 py-2 rounded-lg">
+                    <span class="text-sm">Full-Stack Application</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Status Card -->
+        <div class="card mb-8 bg-green-50 border-l-4 border-green-500">
+            <div class="flex items-center">
+                <div class="bg-green-100 p-2 rounded-lg mr-4">
+                    <i data-feather="check-circle" class="w-6 h-6 text-green-600"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-semibold text-green-800">✅ Application Ready for Deployment</h2>
+                    <p class="text-green-600">All errors have been fixed and the application is working perfectly!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Start -->
+        <div class="card mb-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i data-feather="play-circle" class="w-5 h-5 mr-2 text-blue-600"></i>
+                Quick Start
+            </h2>
+            <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
+                <p class="mb-2"># Frontend (Port 3000)</p>
+                <p class="mb-2 text-white">cd frontend && npm run dev</p>
+                <br>
+                <p class="mb-2"># Backend (Port 5000)</p>
+                <p class="text-white">cd backend && npm start</p>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="feature-item card">
+                <div class="bg-blue-100 p-3 rounded-lg inline-block mb-4">
+                    <i data-feather="users" class="w-6 h-6 text-blue-600"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Donor Management</h3>
+                <p class="text-gray-600">Complete CRUD operations for donor records with search and filtering capabilities.</p>
+            </div>
+
+            <div class="feature-item card">
+                <div class="bg-green-100 p-3 rounded-lg inline-block mb-4">
+                    <i data-feather="file-text" class="w-6 h-6 text-green-600"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Invoice Generation</h3>
+                <p class="text-gray-600">Generate professional invoices with PDF export functionality.</p>
+            </div>
+
+            <div class="feature-item card">
+                <div class="bg-purple-100 p-3 rounded-lg inline-block mb-4">
+                    <i data-feather="receipt" class="w-6 h-6 text-purple-600"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Receipt Management</h3>
+                <p class="text-gray-600">Track and manage donation receipts with automated numbering.</p>
+            </div>
+
+            <div class="feature-item card">
+                <div class="bg-red-100 p-3 rounded-lg inline-block mb-4">
+                    <i data-feather="bar-chart-3" class="w-6 h-6 text-red-600"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Dashboard Analytics</h3>
+                <p class="text-gray-600">Real-time statistics and charts for donations and donor insights.</p>
+            </div>
+
+            <div class="feature-item card">
+                <div class="bg-yellow-100 p-3 rounded-lg inline-block mb-4">
+                    <i data-feather="dollar-sign" class="w-6 h-6 text-yellow-600"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Expense Tracking</h3>
+                <p class="text-gray-600">Monitor and categorize expenses with detailed reporting.</p>
+            </div>
+
+            <div class="feature-item card">
+                <div class="bg-indigo-100 p-3 rounded-lg inline-block mb-4">
+                    <i data-feather="shield" class="w-6 h-6 text-indigo-600"></i>
+                </div>
+                <h3 class="font-semibold text-lg mb-2">Secure Authentication</h3>
+                <p class="text-gray-600">JWT-based authentication with role-based access control.</p>
+            </div>
+        </div>
+
+        <!-- Technology Stack -->
+        <div class="card mb-8">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+                <i data-feather="code" class="w-5 h-5 mr-2 text-purple-600"></i>
+                Technology Stack
+            </h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold text-lg mb-3 text-blue-600">Frontend</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>Next.js 14</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>React 18</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>TypeScript</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>Tailwind CSS</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>React Query</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-lg mb-3 text-green-600">Backend</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Node.js</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Express.js</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>MongoDB</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>JWT Authentication</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Google Sheets API</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deployment Info -->
+        <div class="card bg-blue-50 border-l-4 border-blue-500">
+            <h2 class="text-xl font-bold mb-4 flex items-center text-blue-800">
+                <i data-feather="globe" class="w-5 h-5 mr-2"></i>
+                Deploy to Vercel
+            </h2>
+            <div class="space-y-4">
+                <p class="text-blue-700">Follow the deployment guide to get your application live on Vercel:</p>
+                <div class="bg-white p-4 rounded-lg border border-blue-200">
+                    <h3 class="font-semibold mb-2">📋 Deployment Steps:</h3>
+                    <ol class="list-decimal list-inside space-y-1 text-sm text-gray-700">
+                        <li>Create a Vercel account at <a href="https://vercel.com" class="text-blue-600 hover:underline">vercel.com</a></li>
+                        <li>Push your code to GitHub/GitLab</li>
+                        <li>Deploy backend: Set root directory to <code class="bg-gray-100 px-1 rounded">backend</code></li>
+                        <li>Deploy frontend: Set root directory to <code class="bg-gray-100 px-1 rounded">frontend</code></li>
+                        <li>Configure environment variables</li>
+                    </ol>
+                </div>
+                <div class="bg-white p-4 rounded-lg border border-blue-200">
+                    <h3 class="font-semibold mb-2">🔐 Login Credentials:</h3>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div><strong>Username:</strong> jamamasjid</div>
+                        <div><strong>Password:</strong> 786786</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 Jama Masjid Phugewadi Admin Panel. All rights reserved.</p>
+            <p class="text-gray-400 mt-2">Built with ❤️ using Next.js, Node.js, and MongoDB</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Feather icons
+        feather.replace();
+        
+        // Add some interactivity
+        document.querySelectorAll('.feature-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.style.transform = 'translateY(-2px)';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
