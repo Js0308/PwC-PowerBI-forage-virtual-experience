@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator - Create Stunning Images</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .control-panel {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .output-panel {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+            transform: translateY(-2px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .color-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-input input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .range-input {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .generate-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .generate-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .image-display {
+            width: 100%;
+            min-height: 400px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-display img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .placeholder {
+            text-align: center;
+            color: #999;
+            font-size: 18px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .image-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .enhancement-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(248,249,250,0.8);
+            border-radius: 15px;
+        }
+
+        .enhancement-section h3 {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .enhancement-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 12px 20px;
+            background: linear-gradient(45deg, #17a2b8, #138496);
+            color: white;
+            border-radius: 25px;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .file-upload:hover .file-upload-label {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .gallery {
+            margin-top: 40px;
+        }
+
+        .gallery h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .gallery-item .info {
+            padding: 15px;
+            text-align: center;
+            color: #555;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .tab-buttons {
+                justify-content: center;
+            }
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 AI Image Generator</h1>
+            <p>Create stunning high-quality images with advanced AI algorithms</p>
+        </div>
+
+        <div class="main-content">
+            <div class="control-panel">
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="showTab('gradient')">Gradient</button>
+                    <button class="tab-button" onclick="showTab('abstract')">Abstract Art</button>
+                    <button class="tab-button" onclick="showTab('noise')">Noise Patterns</button>
+                    <button class="tab-button" onclick="showTab('mandala')">Mandala</button>
+                </div>
+
+                <!-- Gradient Tab -->
+                <div id="gradient" class="tab-content active">
+                    <h3>Gradient Generator</h3>
+                    <div class="form-group">
+                        <label>Dimensions</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="gradient-width" value="800" placeholder="Width">
+                            <input type="number" id="gradient-height" value="600" placeholder="Height">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Color 1</label>
+                        <div class="color-input">
+                            <input type="color" id="gradient-color1" value="#ff0000">
+                            <input type="text" id="gradient-color1-text" value="#ff0000">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Color 2</label>
+                        <div class="color-input">
+                            <input type="color" id="gradient-color2" value="#0000ff">
+                            <input type="text" id="gradient-color2-text" value="#0000ff">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Direction</label>
+                        <select id="gradient-direction">
+                            <option value="horizontal">Horizontal</option>
+                            <option value="vertical">Vertical</option>
+                        </select>
+                    </div>
+                    <button class="generate-btn" onclick="generateGradient()">Generate Gradient</button>
+                </div>
+
+                <!-- Abstract Art Tab -->
+                <div id="abstract" class="tab-content">
+                    <h3>Abstract Art Generator</h3>
+                    <div class="form-group">
+                        <label>Dimensions</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="abstract-width" value="800" placeholder="Width">
+                            <input type="number" id="abstract-height" value="600" placeholder="Height">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Complexity: <span id="complexity-value">10</span></label>
+                        <input type="range" id="abstract-complexity" min="5" max="30" value="10" class="range-input" oninput="updateComplexity(this.value)">
+                    </div>
+                    <button class="generate-btn" onclick="generateAbstract()">Generate Abstract Art</button>
+                </div>
+
+                <!-- Noise Patterns Tab -->
+                <div id="noise" class="tab-content">
+                    <h3>Noise Pattern Generator</h3>
+                    <div class="form-group">
+                        <label>Dimensions</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="noise-width" value="800" placeholder="Width">
+                            <input type="number" id="noise-height" value="600" placeholder="Height">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Noise Type</label>
+                        <select id="noise-type">
+                            <option value="random">Random Noise</option>
+                            <option value="perlin">Perlin-like</option>
+                            <option value="gradient">Gradient Noise</option>
+                        </select>
+                    </div>
+                    <button class="generate-btn" onclick="generateNoise()">Generate Noise Pattern</button>
+                </div>
+
+                <!-- Mandala Tab -->
+                <div id="mandala" class="tab-content">
+                    <h3>Mandala Generator</h3>
+                    <div class="form-group">
+                        <label>Dimensions</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="mandala-width" value="800" placeholder="Width">
+                            <input type="number" id="mandala-height" value="600" placeholder="Height">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Complexity: <span id="mandala-complexity-value">8</span></label>
+                        <input type="range" id="mandala-complexity" min="3" max="15" value="8" class="range-input" oninput="updateMandalaComplexity(this.value)">
+                    </div>
+                    <button class="generate-btn" onclick="generateMandala()">Generate Mandala</button>
+                </div>
+
+                <!-- File Upload -->
+                <div class="form-group" style="margin-top: 30px;">
+                    <label>Upload Image for Enhancement</label>
+                    <div class="file-upload">
+                        <input type="file" id="image-upload" accept="image/*" onchange="handleImageUpload(this)">
+                        <label for="image-upload" class="file-upload-label">Choose Image File</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="output-panel">
+                <div class="image-display" id="image-display">
+                    <div class="placeholder">
+                        <p>🖼️ Your generated image will appear here</p>
+                    </div>
+                    <div class="loading" id="loading">Generating image...</div>
+                </div>
+
+                <div class="image-actions">
+                    <button class="action-btn" onclick="downloadImage()">📥 Download</button>
+                    <button class="action-btn" onclick="saveToGallery()">💾 Save to Gallery</button>
+                    <button class="action-btn" onclick="clearImage()">🗑️ Clear</button>
+                </div>
+
+                <div class="enhancement-section">
+                    <h3>Image Enhancement</h3>
+                    <div class="enhancement-controls">
+                        <div class="form-group">
+                            <label>Enhancement Type</label>
+                            <select id="enhancement-type">
+                                <option value="brightness">Brightness</option>
+                                <option value="contrast">Contrast</option>
+                                <option value="color">Color Saturation</option>
+                                <option value="sharpness">Sharpness</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Factor: <span id="enhancement-factor-value">1.2</span></label>
+                            <input type="range" id="enhancement-factor" min="0.5" max="2.0" step="0.1" value="1.2" class="range-input" oninput="updateEnhancementFactor(this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Filters</label>
+                            <select id="filter-type">
+                                <option value="blur">Blur</option>
+                                <option value="sharpen">Sharpen</option>
+                                <option value="edge">Edge Detection</option>
+                                <option value="emboss">Emboss</option>
+                                <option value="smooth">Smooth</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="action-btn" onclick="enhanceImage()">✨ Enhance</button>
+                        <button class="action-btn" onclick="applyFilter()">🎨 Apply Filter</button>
+                    </div>
+                </div>
+
+                <div class="error-message" id="error-message"></div>
+                <div class="success-message" id="success-message"></div>
+            </div>
+        </div>
+
+        <div class="gallery">
+            <h2>🖼️ Image Gallery</h2>
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- Gallery items will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentImage = null;
+        let gallery = JSON.parse(localStorage.getItem('imageGallery')) || [];
+
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showLoading() {
+            document.getElementById('loading').classList.add('active');
+            document.querySelector('.placeholder').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('active');
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('error-message');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successEl = document.getElementById('success-message');
+            successEl.textContent = message;
+            successEl.style.display = 'block';
+            setTimeout(() => {
+                successEl.style.display = 'none';
+            }, 3000);
+        }
+
+        function displayImage(imageData) {
+            const imageDisplay = document.getElementById('image-display');
+            imageDisplay.innerHTML = `<img src="${imageData}" alt="Generated Image">`;
+            currentImage = imageData;
+            hideLoading();
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? [
+                parseInt(result[1], 16),
+                parseInt(result[2], 16),
+                parseInt(result[3], 16)
+            ] : null;
+        }
+
+        function updateComplexity(value) {
+            document.getElementById('complexity-value').textContent = value;
+        }
+
+        function updateMandalaComplexity(value) {
+            document.getElementById('mandala-complexity-value').textContent = value;
+        }
+
+        function updateEnhancementFactor(value) {
+            document.getElementById('enhancement-factor-value').textContent = value;
+        }
+
+        async function generateGradient() {
+            showLoading();
+            
+            const width = parseInt(document.getElementById('gradient-width').value);
+            const height = parseInt(document.getElementById('gradient-height').value);
+            const color1 = hexToRgb(document.getElementById('gradient-color1').value);
+            const color2 = hexToRgb(document.getElementById('gradient-color2').value);
+            const direction = document.getElementById('gradient-direction').value;
+
+            try {
+                const response = await fetch('/generate/gradient', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        width,
+                        height,
+                        color1,
+                        color2,
+                        direction
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    displayImage(data.image);
+                    showSuccess('Gradient generated successfully!');
+                } else {
+                    showError(data.error);
+                    hideLoading();
+                }
+            } catch (error) {
+                showError('Failed to generate gradient: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        async function generateAbstract() {
+            showLoading();
+            
+            const width = parseInt(document.getElementById('abstract-width').value);
+            const height = parseInt(document.getElementById('abstract-height').value);
+            const complexity = parseInt(document.getElementById('abstract-complexity').value);
+
+            try {
+                const response = await fetch('/generate/abstract', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        width,
+                        height,
+                        complexity
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    displayImage(data.image);
+                    showSuccess('Abstract art generated successfully!');
+                } else {
+                    showError(data.error);
+                    hideLoading();
+                }
+            } catch (error) {
+                showError('Failed to generate abstract art: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        async function generateNoise() {
+            showLoading();
+            
+            const width = parseInt(document.getElementById('noise-width').value);
+            const height = parseInt(document.getElementById('noise-height').value);
+            const type = document.getElementById('noise-type').value;
+
+            try {
+                const response = await fetch('/generate/noise', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        width,
+                        height,
+                        type
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    displayImage(data.image);
+                    showSuccess('Noise pattern generated successfully!');
+                } else {
+                    showError(data.error);
+                    hideLoading();
+                }
+            } catch (error) {
+                showError('Failed to generate noise pattern: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        async function generateMandala() {
+            showLoading();
+            
+            const width = parseInt(document.getElementById('mandala-width').value);
+            const height = parseInt(document.getElementById('mandala-height').value);
+            const complexity = parseInt(document.getElementById('mandala-complexity').value);
+
+            try {
+                const response = await fetch('/generate/mandala', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        width,
+                        height,
+                        complexity
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    displayImage(data.image);
+                    showSuccess('Mandala generated successfully!');
+                } else {
+                    showError(data.error);
+                    hideLoading();
+                }
+            } catch (error) {
+                showError('Failed to generate mandala: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        async function enhanceImage() {
+            if (!currentImage) {
+                showError('No image to enhance. Please generate or upload an image first.');
+                return;
+            }
+
+            showLoading();
+            
+            const type = document.getElementById('enhancement-type').value;
+            const factor = parseFloat(document.getElementById('enhancement-factor').value);
+
+            try {
+                const response = await fetch('/enhance', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        image_data: currentImage,
+                        type,
+                        factor
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    displayImage(data.image);
+                    showSuccess('Image enhanced successfully!');
+                } else {
+                    showError(data.error);
+                    hideLoading();
+                }
+            } catch (error) {
+                showError('Failed to enhance image: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        async function applyFilter() {
+            if (!currentImage) {
+                showError('No image to filter. Please generate or upload an image first.');
+                return;
+            }
+
+            showLoading();
+            
+            const type = document.getElementById('filter-type').value;
+
+            try {
+                const response = await fetch('/filter', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        image_data: currentImage,
+                        type
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    displayImage(data.image);
+                    showSuccess('Filter applied successfully!');
+                } else {
+                    showError(data.error);
+                    hideLoading();
+                }
+            } catch (error) {
+                showError('Failed to apply filter: ' + error.message);
+                hideLoading();
+            }
+        }
+
+        function handleImageUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImage = e.target.result;
+                    displayImage(currentImage);
+                    showSuccess('Image uploaded successfully!');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function downloadImage() {
+            if (!currentImage) {
+                showError('No image to download. Please generate an image first.');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.download = `generated-image-${Date.now()}.png`;
+            link.href = currentImage;
+            link.click();
+        }
+
+        function saveToGallery() {
+            if (!currentImage) {
+                showError('No image to save. Please generate an image first.');
+                return;
+            }
+
+            const imageData = {
+                id: Date.now(),
+                image: currentImage,
+                timestamp: new Date().toISOString(),
+                type: 'generated'
+            };
+
+            gallery.push(imageData);
+            localStorage.setItem('imageGallery', JSON.stringify(gallery));
+            updateGallery();
+            showSuccess('Image saved to gallery!');
+        }
+
+        function clearImage() {
+            const imageDisplay = document.getElementById('image-display');
+            imageDisplay.innerHTML = '<div class="placeholder"><p>🖼️ Your generated image will appear here</p></div>';
+            currentImage = null;
+        }
+
+        function updateGallery() {
+            const galleryGrid = document.getElementById('gallery-grid');
+            galleryGrid.innerHTML = '';
+
+            gallery.slice(-12).reverse().forEach(item => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.innerHTML = `
+                    <img src="${item.image}" alt="Gallery Image" onclick="displayImage('${item.image}')">
+                    <div class="info">
+                        <p>${new Date(item.timestamp).toLocaleDateString()}</p>
+                        <button class="action-btn" onclick="deleteFromGallery(${item.id})" style="font-size: 12px; padding: 5px 10px;">Delete</button>
+                    </div>
+                `;
+                galleryGrid.appendChild(galleryItem);
+            });
+        }
+
+        function deleteFromGallery(id) {
+            gallery = gallery.filter(item => item.id !== id);
+            localStorage.setItem('imageGallery', JSON.stringify(gallery));
+            updateGallery();
+            showSuccess('Image deleted from gallery!');
+        }
+
+        // Color picker sync
+        document.getElementById('gradient-color1').addEventListener('input', function(e) {
+            document.getElementById('gradient-color1-text').value = e.target.value;
+        });
+
+        document.getElementById('gradient-color2').addEventListener('input', function(e) {
+            document.getElementById('gradient-color2-text').value = e.target.value;
+        });
+
+        document.getElementById('gradient-color1-text').addEventListener('input', function(e) {
+            document.getElementById('gradient-color1').value = e.target.value;
+        });
+
+        document.getElementById('gradient-color2-text').addEventListener('input', function(e) {
+            document.getElementById('gradient-color2').value = e.target.value;
+        });
+
+        // Initialize gallery on page load
+        updateGallery();
+    </script>
+</body>
+</html>
